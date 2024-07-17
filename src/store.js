@@ -1,5 +1,6 @@
 import {combineReducers, createStore} from "redux";
-
+import accountReducer from "./features/accounts/accountSlice";
+import customerReducer from "./features/customers/customerSlice";
 
 
 const rootReducer = combineReducers({
@@ -8,5 +9,7 @@ const rootReducer = combineReducers({
 })
 
 const store = createStore(rootReducer);
+
+export default store;
 
 
