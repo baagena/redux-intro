@@ -1,12 +1,18 @@
-import {createStore} from "redux";
+import {combineReducers, createStore} from "redux";
 
-const initialState = {
+const initialStateAccount = {
     balance: 0,
     loan:0,
     loanPurpose: ""
 }
 
-function reducer(state = initialState, action) {
+const initialStateCustomer = {
+    fullname: "",
+    nationalID: "",
+    createdAt: "",
+}
+
+function accountReducer(state = initialStateAccount, action) {
     switch (action.type) {
         case "account/deposit":
             return {...state, balance: state.balance + action.payload}
@@ -22,7 +28,25 @@ function reducer(state = initialState, action) {
     }
 }
 
-const store = createStore(reducer);
+function customerReducer(state = initialStateCustomer, action) {
+    switch (action.type) {
+        case "customer/createAccount":
+            return {...state, fullname: action.payload.fullname, nationalID: action.payload.nationalID, createdAt: action.payload.createdAt}
+        
+        case "customer/updateName":
+            return {...state, fullname: action.payload}
+
+        default:
+            return state
+    }
+}
+
+const rootReducer = combineReducers({
+    account: accountReducer,
+    customer: customerReducer,
+})
+
+const store = createStore(rootReducer);
 
 // store.dispatch({type: "account/deposit", payload: 500})
 
@@ -49,7 +73,24 @@ function payLoan() {
     return {type: "account/payLoan"}
 }
 
+
 store.dispatch(deposit(500))
+console.log(store.getState())
 store.dispatch(withdraw(200))
 store.dispatch(requestLoan(1000, "buy a cheap car."))
+console.log(store.getState())
 store.dispatch(payLoan())
+
+
+function createAccount(fullname, nationalID) {
+    return {type: "customer/createAccount", payload: {fullname, nationalID, createdAt: new Date().toISOString()}}
+}
+
+function updateName(fullname) {
+    return {type: "customer/updateName", payload: fullname}
+}
+
+store.dispatch(createAccount("bagena Prince", "1234543454"))
+console.log(store.getState())
+store.dispatch(updateName("bagena bagena"))
+console.log(store.getState())
